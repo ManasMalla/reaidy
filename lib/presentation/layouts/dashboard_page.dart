@@ -23,10 +23,13 @@ class DashboardPage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Image.network(
-                    user.profilePictureUrl,
-                    height: 80,
-                    width: 80,
+                  ClipOval(
+                    child: Image.network(
+                      user.profilePictureUrl,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(
                     width: 32,
@@ -68,10 +71,13 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   Text(
                     "Credit points",
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const Spacer(),
-                  const Text("Interviews Completed: "),
+                  Text(
+                    "Interviews Completed: ",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
