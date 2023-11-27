@@ -1,4 +1,7 @@
-class Course {
+import 'package:equatable/equatable.dart';
+import 'package:reaidy/domain/entities/topic.dart';
+
+class Course extends Equatable {
   final String id;
   final String title;
   final String description;
@@ -11,6 +14,8 @@ class Course {
   final List<dynamic> courseFor;
   final bool comingSoon;
   final bool isActive;
+  final List<Topic> topics;
+  final List<String> completedTopics;
 
   const Course({
     required this.id,
@@ -25,5 +30,11 @@ class Course {
     required this.courseFor,
     required this.comingSoon,
     required this.isActive,
+    required this.topics,
+    required this.completedTopics,
   });
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id];
 }

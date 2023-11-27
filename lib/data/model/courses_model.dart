@@ -1,4 +1,5 @@
 import 'package:reaidy/domain/entities/course.dart';
+import 'package:reaidy/domain/entities/topic.dart';
 
 class CoursesModel {
   final String id;
@@ -13,6 +14,8 @@ class CoursesModel {
   final List<dynamic> courseFor;
   final bool comingSoon;
   final bool isActive;
+  final List<Topic> topics;
+  final List<String> completedTopics;
 
   const CoursesModel({
     required this.id,
@@ -21,20 +24,23 @@ class CoursesModel {
     required this.image,
     required this.thumbnail,
     required this.sort,
+    required this.topics,
     this.benefits = const [],
     this.outComes = const [],
     this.requirements = const [],
     this.courseFor = const [],
     this.comingSoon = false,
     this.isActive = true,
+    required this.completedTopics,
   });
 
-  factory CoursesModel.fromJson(Map<String, dynamic> json) {
+  factory CoursesModel.fromJson(
+      Map<String, dynamic> json, List<Topic> subtopics) {
     return CoursesModel(
-      id: json['_id'] ?? json['course']['_id'],
-      title: json['title'] ?? json['course']['title'],
+      id: json['course']?['_id'] ?? json['_id'],
+      title: json['course']?['title'] ?? json['title'],
       description: json['description'] ?? "",
-      image: json['image'] ?? json['course']['image'],
+      image: json['course']?['image'] ?? json['image'],
       thumbnail: json['thumbnail'],
       sort: json['sort'] ?? 0,
       benefits: json['benefits'] ?? [],
@@ -46,6 +52,10 @@ class CoursesModel {
       courseFor: json['CourseFor'] ?? [],
       comingSoon: json['comingSoon'] ?? false,
       isActive: json['isActive'] ?? true,
+      topics: subtopics,
+      completedTopics: (json['completedTopics'] as List<dynamic>? ?? [])
+          .map<String>((e) => e["topicId"])
+          .toList(),
     );
   }
 
@@ -67,16 +77,19 @@ class CoursesModel {
   }
 
   Course toEntity() => Course(
-      id: id,
-      title: title,
-      description: description,
-      image: image,
-      thumbnail: thumbnail ?? image,
-      sort: sort,
-      benefits: benefits,
-      outComes: outComes,
-      requirements: requirements,
-      courseFor: courseFor,
-      comingSoon: comingSoon,
-      isActive: isActive);
+        id: id,
+        title: title,
+        description: description,
+        image: image,
+        thumbnail: thumbnail ?? image,
+        sort: sort,
+        benefits: benefits,
+        outComes: outComes,
+        requirements: requirements,
+        courseFor: courseFor,
+        comingSoon: comingSoon,
+        isActive: isActive,
+        topics: topics,
+        completedTopics: completedTopics,
+      );
 }

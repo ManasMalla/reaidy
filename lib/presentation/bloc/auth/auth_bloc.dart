@@ -25,6 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           if (prefs.containsKey("sub") && prefs.containsKey("email")) {
             final result = GoogleOAuthResult(
               identifier: prefs.getString("sub")!,
+              displayName: "",
               email: prefs.getString("email")!,
             );
             final response = await Injector.loginRepository.login(result);
@@ -48,11 +49,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(LoadingAuthState());
       final response = await loginUsecase.login();
       response.fold(
+        (failure) => {
+          if (failure.message == "Please register yourself")
+            {
+              emit(
+                RegisterNewUserState(
+                  userRoles: failure.data["userRoles"],
+                  displayName: failure.data["displayName"],
+                ),
+              )
+            }
+          else
+            {
+              emit(
+                FailureAuthState(message: failure.message),
+              )
+            }
+        },
+        (user) {
+          emit(SuccessAuthState(user: user));
+        },
+      );
+    });
+    on<UpdateUserData>((event, emit) async {
+      emit(LoadingAuthState());
+      final updateUserData =
+          await loginUsecase.updateUser(event.googleId, event.userData);
+      updateUserData.fold(
         (failure) => emit(
           FailureAuthState(message: failure.message),
         ),
-        (user) {
-          emit(SuccessAuthState(user: user));
+        (success) {
+          emit(
+            SuccessAuthState(user: success),
+          );
         },
       );
     });

@@ -10,6 +10,9 @@ class InterviewModel extends Equatable {
   final bool isResultPublished;
   final int numberOfQuestions;
   final int createdAt;
+  final double communication;
+  final double technical;
+  final double overall;
   const InterviewModel({
     required this.id,
     required this.technology,
@@ -19,6 +22,9 @@ class InterviewModel extends Equatable {
     required this.isResultPublished,
     required this.numberOfQuestions,
     required this.createdAt,
+    required this.communication,
+    required this.technical,
+    required this.overall,
   });
 
   @override
@@ -34,6 +40,24 @@ class InterviewModel extends Equatable {
         isResultPublished: json["isResultPublished"],
         numberOfQuestions: json["noOfQuestions"],
         createdAt: json["createdAt"],
+        communication: json["result"].isEmpty
+            ? 0.0
+            : json["result"]
+                .where((e) => e["name"] == "communication_score")
+                .first["score"]
+                .toDouble(),
+        technical: json["result"].isEmpty
+            ? 0.0
+            : json["result"]
+                .where((e) => e["name"] == "technical_score")
+                .first["score"]
+                .toDouble(),
+        overall: json["result"].isEmpty
+            ? 0.0
+            : json["result"]
+                .where((e) => e["name"] == "average_technical_score")
+                .first["score"]
+                .toDouble(),
       );
 
   Interview toEntity() => Interview(
@@ -44,6 +68,9 @@ class InterviewModel extends Equatable {
         isInterviewCompleted: isInterviewCompleted,
         isResultPublished: isResultPublished,
         numberOfQuestions: numberOfQuestions,
-        createdAt: DateTime.fromMicrosecondsSinceEpoch(createdAt),
+        createdAt: DateTime.fromMillisecondsSinceEpoch(createdAt),
+        communication: communication.toInt(),
+        technical: technical.toInt(),
+        overall: overall.toInt(),
       );
 }

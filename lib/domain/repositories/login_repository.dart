@@ -5,4 +5,7 @@ import 'package:reaidy/domain/entities/user.dart';
 
 abstract class LoginRepository {
   Future<Either<Failure, User>> login(GoogleOAuthResult googleAuthResult);
+
+  Future<Either<Failure, User>> updateUser(
+      {required String googleId, required Map<String, dynamic> userData});
 }

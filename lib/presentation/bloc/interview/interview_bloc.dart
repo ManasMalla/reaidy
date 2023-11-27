@@ -29,5 +29,18 @@ class InterviewBloc extends Bloc<InterviewEvent, InterviewState> {
         },
       );
     });
+    on<FetchSpecificInterview>((event, emit) async {
+      emit(InterviewListLoadingState());
+      final response =
+          await interviewUsecase.fetchInterviewById(event.interviewId);
+      response.fold(
+        (failure) => emit(
+          InterviewFailureState(message: failure.message),
+        ),
+        (interviews) {
+          emit(SpecificInterviewState(interview: interviews));
+        },
+      );
+    });
   }
 }

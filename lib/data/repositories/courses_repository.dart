@@ -47,4 +47,39 @@ class CoursesRepositoryImpl implements CoursesRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, void>> enrollCourse(
+      String userId, String courseId) async {
+    try {
+      final result = await coursesDataSource.enrollCourse(userId, courseId);
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(
+        Failure(message: e.message),
+      );
+    } on SocketException {
+      return const Left(
+        Failure(message: "No Internet Connection"),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> markSubtopicAsCompleted(
+      String userId, String courseId, String topicId) async {
+    try {
+      final result = await coursesDataSource.markSubtopicAsCompleted(
+          userId, courseId, topicId);
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(
+        Failure(message: e.message),
+      );
+    } on SocketException {
+      return const Left(
+        Failure(message: "No Internet Connection"),
+      );
+    }
+  }
 }

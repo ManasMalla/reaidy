@@ -5,6 +5,7 @@ class UserModel extends Equatable {
   final String id;
   final String name;
   final String email;
+  final String userRole;
   final bool isMailVerified;
   final bool isAccountVerified;
   final String profilePictureUrl;
@@ -28,6 +29,7 @@ class UserModel extends Equatable {
     required this.id,
     required this.name,
     required this.email,
+    required this.userRole,
     this.isMailVerified = false,
     this.isAccountVerified = false,
     required this.profilePictureUrl,
@@ -53,9 +55,10 @@ class UserModel extends Equatable {
         id: json["_id"],
         name: json["name"],
         email: json["mail"],
+        userRole: json["role"]["role"],
         isMailVerified: json["isMailVerified"],
         isAccountVerified: json["isAccountVerified"],
-        profilePictureUrl: json["pic"],
+        profilePictureUrl: json["pic"] ?? "https://github.com/ManasMalla.png",
         skills:
             (json["skills"] as List<dynamic>).map((e) => e.toString()).toList(),
         googleId: json["gId"],
@@ -72,12 +75,13 @@ class UserModel extends Equatable {
         overallRating: json["overallRating"] ?? 0,
         referralCode: json["referalCode"],
         coins: json["coins"] ?? 0,
-        coinsUsage: json["coinUsage"],
+        coinsUsage: json["coinUsage"] ?? [],
       );
   User toEntity() => User(
       id: id,
       name: name,
       email: email,
+      userRole: userRole,
       isMailVerified: isMailVerified,
       isAccountVerified: isAccountVerified,
       profilePictureUrl: profilePictureUrl,

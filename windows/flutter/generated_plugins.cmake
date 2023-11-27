@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  dynamic_color
+  flutter_tts
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

@@ -21,4 +21,9 @@ class LoginUsecase {
       (googleAuthResult) async => await loginRepository.login(googleAuthResult),
     );
   }
+
+  Future<Either<Failure, User>> updateUser(
+      String googleId, Map<String, dynamic> userData) async {
+    return loginRepository.updateUser(googleId: googleId, userData: userData);
+  }
 }

@@ -4,6 +4,7 @@ class User extends Equatable {
   final String id;
   final String name;
   final String email;
+  final String userRole;
   final bool isMailVerified;
   final bool isAccountVerified;
   final String profilePictureUrl;
@@ -27,6 +28,7 @@ class User extends Equatable {
     required this.id,
     required this.name,
     required this.email,
+    required this.userRole,
     required this.isMailVerified,
     required this.isAccountVerified,
     required this.profilePictureUrl,

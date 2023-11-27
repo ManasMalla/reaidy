@@ -34,14 +34,14 @@ class _SplashPageState extends State<SplashPage> {
             ),
             Text.rich(
               TextSpan(children: [
-                TextSpan(text: "Re"),
+                const TextSpan(text: "Re"),
                 TextSpan(
                   text: "ai",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                TextSpan(text: "dy"),
+                const TextSpan(text: "dy"),
               ]),
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
                     fontFamily: "Gobold Extra",
@@ -59,7 +59,61 @@ class _SplashPageState extends State<SplashPage> {
             const Spacer(),
             BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is SuccessAuthState) {
+                if (state is RegisterNewUserState) {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) => Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              children: [
+                                TextField(
+                                  decoration: const InputDecoration(
+                                    hintText: "Name",
+                                    filled: true,
+                                  ),
+                                  controller: TextEditingController(
+                                    text: state.displayName,
+                                  ),
+                                  onChanged: null,
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                SegmentedButton(
+                                  segments: state.userRoles
+                                      .map(
+                                        (e) => ButtonSegment(
+                                          value: e,
+                                          label: Text(e.name),
+                                        ),
+                                      )
+                                      .toList(),
+                                  selected: {},
+                                  onSelectionChanged: (_) {},
+                                  multiSelectionEnabled: false,
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: FilledButton(
+                                    child: const Text("Register"),
+                                    onPressed: () {
+                                      //TODO work on workflow for new users
+                                      // Injector.authBloc.add(
+                                      //   OnRegisterUser(
+                                      //     displayName: state.displayName,
+                                      //     userRole: state.userRoles.first,
+                                      //   ),
+                                      // );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
+                } else if (state is SuccessAuthState) {
                   Navigator.of(context).pushReplacementNamed(
                     "/home",
                     arguments: state.user,

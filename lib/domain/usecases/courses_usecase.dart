@@ -16,4 +16,16 @@ class CoursesUsecase {
     final result = coursesRepository.fetchAllCourses();
     return result;
   }
+
+  Future<Either<Failure, void>> enrollCourse(String id, String courseId) async {
+    final result = coursesRepository.enrollCourse(id, courseId);
+    return result;
+  }
+
+  Future<Either<Failure, void>> markSubtopicAsCompleted(
+      String userId, String courseId, String topicId) async {
+    final result =
+        coursesRepository.markSubtopicAsCompleted(userId, courseId, topicId);
+    return result;
+  }
 }

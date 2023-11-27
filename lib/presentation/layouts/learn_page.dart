@@ -9,10 +9,13 @@ import 'package:reaidy/presentation/bloc/interview/interview_bloc.dart';
 import 'package:reaidy/presentation/bloc/interview/interview_event.dart';
 import 'package:reaidy/presentation/bloc/interview/interview_state.dart';
 import 'package:reaidy/presentation/injector.dart';
+import 'package:reaidy/presentation/layouts/home_page.dart';
 
 class LearnPage extends StatelessWidget {
+  final String userId;
   const LearnPage({
     super.key,
+    required this.userId,
   });
 
   @override
@@ -20,71 +23,173 @@ class LearnPage extends StatelessWidget {
     return BlocBuilder<CoursesBloc, CoursesState>(builder: (context, state) {
       return Scaffold(
         body: state is SuccessCoursesListState
-            ? Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 24,
-                      crossAxisSpacing: 24,
-                      childAspectRatio: 0.75),
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        ClipOval(
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: RadialGradient(
-                                  colors: [
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.6),
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.05)
-                                  ],
-                                ),
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: ClipOval(
-                                child: Container(
-                                  color: Colors.black,
-                                  child: state.allCourses[index].thumbnail
-                                          .contains("http")
-                                      ? Image.network(
-                                          state.allCourses[index].thumbnail,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Image.memory(
-                                          base64Decode(state
-                                              .allCourses[index].thumbnail
-                                              .split("base64,")[1]),
-                                          fit: BoxFit.cover,
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ),
+            ? SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0).copyWith(bottom: 24 + 56),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Enrolled Courses",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      SizedBox(
+                        height: 152,
+                        child: LearningSection(
+                          goToLearn: () {},
+                          userId: userId,
                         ),
-                        SizedBox(
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Text(
+                        "Available Courses",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        primary: false,
+                        separatorBuilder: (_, __) => SizedBox(
                           height: 12,
                         ),
-                        Text(
-                          state.allCourses[index].title,
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    );
-                  },
-                  itemCount: state.allCourses.length,
+                        itemBuilder: (context, index) {
+                          var course = state.allCourses
+                              .where((element) =>
+                                  !state.userCourses.contains(element))
+                              .toList()[index];
+                          return Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 128,
+                                    width: double.infinity,
+                                    child: Container(
+                                      color: Colors.black,
+                                      child: course.thumbnail.contains("http")
+                                          ? Image.network(
+                                              course.thumbnail,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.memory(
+                                              base64Decode(course.thumbnail
+                                                  .split("base64,")[1]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          course.title,
+                                          maxLines: 2,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                        const SizedBox(
+                                          height: 6,
+                                        ),
+                                        Text(
+                                          course.description,
+                                          maxLines: 4,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          children: [
+                                            state.userCourses.contains(course)
+                                                ? SizedBox()
+                                                : FilledButton(
+                                                    onPressed: () {
+                                                      Injector.coursesBloc.add(
+                                                        EnrollCourse(
+                                                          userId: userId,
+                                                          courseId: course.id,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: const Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .lock_open_outlined,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 12,
+                                                        ),
+                                                        Text("Enroll"),
+                                                      ],
+                                                    ),
+                                                  ),
+                                            SizedBox(
+                                              width: 12,
+                                            ),
+                                            OutlinedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pushNamed(
+                                                  '/view-course',
+                                                  arguments: {
+                                                    "courseId": course.id,
+                                                    "userId": userId
+                                                  },
+                                                );
+                                              },
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text("View Course"),
+                                                  SizedBox(
+                                                    width: 12,
+                                                  ),
+                                                  Icon(
+                                                    Icons.arrow_forward,
+                                                    size: 16,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ]),
+                          );
+                        },
+                        itemCount: state.allCourses
+                            .where((element) =>
+                                !state.userCourses.contains(element))
+                            .length,
+                      ),
+                    ],
+                  ),
                 ),
               )
-            : CircularProgressIndicator(),
+            : state is CoursesFailureState
+                ? Center(
+                    child: Text(state.message),
+                  )
+                : const Center(child: CircularProgressIndicator()),
       );
     });
   }

@@ -28,6 +28,7 @@ class GoogleOneTapAuthRepositoryImpl implements GoogleAuthRepository {
       )));
       final result = GoogleOAuthResult(
         identifier: response["sub"],
+        displayName: response["name"],
         email: response["email"],
       );
       SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -23,6 +23,35 @@ class LoginRepositoryImpl implements LoginRepository {
     try {
       final result = await loginDataSource.login(googleAuthResult);
       return Right(result.toEntity());
+    } on LoginException catch (exception) {
+      return Left(
+        Failure(
+          message: "Please register yourself",
+          data: {
+            "userRoles": exception.userRoles,
+            "displayName": exception.displayName,
+          },
+        ),
+      );
+    } on ServerException catch (exception) {
+      return Left(
+        Failure(message: exception.message),
+      );
+    } on SocketException catch (exception) {
+      return Left(
+        Failure(message: exception.message),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> updateUser(
+      {required String googleId,
+      required Map<String, dynamic> userData}) async {
+    try {
+      final result = await loginDataSource.updateUser(
+          googleId: googleId, userData: userData);
+      return Right(result.toEntity());
     } on ServerException catch (exception) {
       return Left(
         Failure(message: exception.message),

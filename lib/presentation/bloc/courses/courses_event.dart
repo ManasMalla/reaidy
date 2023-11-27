@@ -10,3 +10,25 @@ class FetchCoursesList extends CoursesEvent {
   final String userId;
   const FetchCoursesList({required this.userId});
 }
+
+class EnrollCourse extends CoursesEvent {
+  final String userId;
+  final String courseId;
+  const EnrollCourse({
+    required this.userId,
+    required this.courseId,
+  });
+}
+
+class MarkSubtopicAsCompleted extends CoursesEvent {
+  final String userId;
+  final String courseId;
+  final String topicId;
+  final Function() callback;
+  const MarkSubtopicAsCompleted({
+    required this.userId,
+    required this.courseId,
+    required this.topicId,
+    required this.callback,
+  });
+}

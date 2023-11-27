@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaidy/domain/usecases/courses_usecase.dart';
 import 'package:reaidy/presentation/bloc/courses/courses_event.dart';
 import 'package:reaidy/presentation/bloc/courses/courses_state.dart';
+import 'package:reaidy/presentation/injector.dart';
 
 class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final CoursesUsecase coursesUsecase;
@@ -29,6 +30,38 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
                     allCourses: allCourses, userCourses: userEnrolledCourses),
               );
             },
+          );
+        },
+      );
+    });
+    on<EnrollCourse>((event, emit) async {
+      emit(CoursesListLoadingState());
+      final enrollCourseResponse =
+          await coursesUsecase.enrollCourse(event.userId, event.courseId);
+      enrollCourseResponse.fold(
+        (failure) => emit(
+          CoursesFailureState(message: failure.message),
+        ),
+        (success) {
+          add(
+            FetchCoursesList(userId: event.userId),
+          );
+        },
+      );
+    });
+
+    on<MarkSubtopicAsCompleted>((event, emit) async {
+      emit(CoursesListLoadingState());
+      final enrollCourseResponse = await coursesUsecase.markSubtopicAsCompleted(
+          event.userId, event.courseId, event.topicId);
+      enrollCourseResponse.fold(
+        (failure) => emit(
+          CoursesFailureState(message: failure.message),
+        ),
+        (success) {
+          event.callback();
+          add(
+            FetchCoursesList(userId: event.userId),
           );
         },
       );

@@ -9,6 +9,10 @@ class Interview extends Equatable {
   final bool isResultPublished;
   final int numberOfQuestions;
   final DateTime createdAt;
+
+  final int communication;
+  final int technical;
+  final int overall;
   const Interview({
     required this.id,
     required this.technology,
@@ -18,6 +22,9 @@ class Interview extends Equatable {
     required this.isResultPublished,
     required this.numberOfQuestions,
     required this.createdAt,
+    required this.communication,
+    required this.technical,
+    required this.overall,
   });
 
   @override
